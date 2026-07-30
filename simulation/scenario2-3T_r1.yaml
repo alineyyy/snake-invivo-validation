@@ -11,7 +11,7 @@ defaults:
 cache_dir: ${oc.env:SCRATCH}/simulate_3T_snake/cache
 result_dir: ${oc.env:SCRATCH}/simulate_3T_snake/results
 filename:  ${hydra:run.dir}/scenario2_${engine.model}_${engine.snr}_${sampler.stack-of-spiral.acsz}_${sampler.stack-of-spiral.accelz}.mrd
-#smaps_filename: ${oc.env:SCRATCH}/data_3T_invivo/smaps_invivo.npy
+
 smaps_filename: None
 sim_conf:
   max_sim_time: 240
