@@ -1,0 +1,28 @@
+job_name              acsz    accelz     init_strategy    id        SNR 
+R8_cs_global_4           3       18           global      4        2400
+R8_cs_4                 3      18             cold        4        2400
+R8_cs_44                  3      18            cold        44       2000
+R8_cs_global_44           3       18           global      44       2000 
+R8_cs_6                  3      18            cold         6        1800
+R8_cs_global_6           3       18           global       6        1800
+R8_cs_18                  3      18            cold        18       2200
+R8_cs_global_18           3       18           global      18       2200 
+R4_cs_4                 8       16            cold        4        2400
+R2_cs_4                 10      3             cold        4        2400
+R2_cs_global_4           10      3            global      4        2400
+R4_cs_44                 8       16            cold        44       2000
+R2_cs_44                 10      3             cold        44       2000
+R4_cs_global_44           8      16            global      44       2000
+R2_cs_global_44           10      3            global      44       2000
+R4_cs_6                 8       16            cold         6        1800
+R2_cs_6                 10      3             cold         6        1800
+R4_cs_global_6           8      16            global       6        1800
+R2_cs_global_6           10      3            global       6        1800
+R4_cs_18                 8       16            cold        18       2200
+R2_cs_18                 10      3             cold        18       2200
+R4_cs_global_18           8      16            global      18       2200
+R2_cs_global_18           10      3            global      18       2200
+
+
+
+

@@ -1,0 +1,5 @@
+job_name            acsz    accelz     init_strategy    id      SNR
+R1_cg_4                0.1      1             cold     4       2400       
+R1_cg_6                0.1      1             cold      6       1800
+R1_cg_18                0.1      1             cold     18      2200
+R1_cg_44                0.1      1             cold     44      2000
