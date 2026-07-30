@@ -1,0 +1,119 @@
+defaults:
+  - base_config
+  - handlers:
+    - activation-block
+  - sampler:
+    - stack-of-spiral
+  - reconstructors:
+    - sequential
+  - _self_
+
+cache_dir: ${oc.env:SCRATCH}/simulate_3T_snake/cache
+result_dir: ${oc.env:SCRATCH}/simulate_3T_snake/results/
+#filename:   ${oc.env:SCRATCH}/simulate_3T_snake/results/outputs/R8_cs_global_4/2026-07-02_17-11-34_3_18/scenario2_T2s_2400.0_3_18.mrd
+#smaps_filename: ${oc.env:SCRATCH}/data_3T_invivo/smaps_invivo.npy
+#/volatile/Caini/mnt/topaze/scratch/simulate_3T_snake/results/outputs/R8_cs_global_4/2026-07-02_17-11-34_3_18/scenario2_T2s_2400.0_3_18.mrd
+smaps_filename: None
+sim_conf:
+  max_sim_time: 240
+  seq: {TR: 50, TE: 30, FA: 18}
+  hardware:
+    n_coils: 1
+    dwell_time_ms: 0.002
+    raster_time_ms: 0.01
+    field: 3.0
+  fov:
+    res_mm: [3, 3, 3]
+    size: [192.0, 192.0, 120.0]
+    offset: [-90, -110, -40]
+
+phantom:
+  name: brainweb
+  sub_id: 4
+  tissue_file: "tissue_3T"
+
+handlers:
+  activation-block:
+    event_name: block_on
+    block_on: 30 # seconds
+    block_off: 30 #seconds
+    duration: 240 # seconds
+    delta_r2s: 1000 # millisecond^-1
+
+sampler:
+  load-trajectory:
+    path: ${oc.env:SCRATCH}/data_3T_invivo/stackofspiral_static_full_proj_smax0.2_192x192x120_320s.bin
+    obs_time_ms: 30
+    dwell_time: 0.002
+    raster_time: 0.01
+    constant: True
+    slice_num: 40
+  stack-of-spiral:
+    acsz: 3
+    accelz: 18
+    nb_revolutions: 16
+    spiral_name: "archimedes"
+    pdfz: "gaussian"
+    orderz: "top-down"
+    obs_time_ms: 30
+    constant: True
+
+
+
+engine:
+  n_jobs: 10
+  chunk_size: 100
+  model: "T2s"
+  snr: 1000
+  nufft_backend: "cufinufft"
+  coil_cov: False
+
+reconstructors:
+  # cg:
+  #     nufft_backend: "cufinufft"
+  #     density_compensation: True
+  #     restart_strategy: COLD
+  #     max_iter: 20
+  #     tol: 1e-5
+  # merge-global:
+  #     nufft_baeckend: "cufinufft"
+  #     density_compensation: False
+  #     restart_strategy: "cold"
+  #     max_iter: 50
+  #     tol: 1e-8
+  sequential:
+      nufft_backend: "cufinufft"
+      density_compensation: False
+      restart_strategy: COLD
+      max_iter_per_frame: 30
+      optimizer: "fista"
+      wavelet: "sym4"
+      threshold: 5e-2
+      init_strategy: "cold"
+      compute_backend: "numpy"
+
+
+
+hydra:
+  job:
+    chdir: true
+
+  run:
+    dir: ${result_dir}/outputs/${hydra.job.name}/${now:%Y-%m-%d_%H-%M-%S}_${sampler.stack-of-spiral.acsz}_${sampler.stack-of-spiral.accelz}
+  sweep:
+    dir: ${result_dir}/multirun/${hydra.job.name}/${now:%Y-%m-%d_%H-%M-%S}_${sampler.stack-of-spiral.acsz}_${sampler.stack-of-spiral.accelz}
+    subdir: ${hydra.job.num}
+
+  callbacks:
+    # gather_files:
+    #   _target_: hydra_callbacks.MultiRunGatherer
+    #   aggregator:
+    #     _partial_: true
+    #     _target_: snkf.cli.utils.aggregate_results
+
+    log_job:
+      _target_: hydra.experimental.callbacks.LogJobReturnCallback
+    latest_run:
+      _target_: hydra_callbacks.LatestRunLink
+      run_base_dir:  ${result_dir}/outputs
+      multirun_base_dir:  ${result_dir}/multirun
